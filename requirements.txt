@@ -1,0 +1,3 @@
+joblib==0.13.1
+pathlib==1.0.1
+openslide-python==1.1.1
