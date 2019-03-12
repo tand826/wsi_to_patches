@@ -44,8 +44,8 @@ class Patcher:
         patch.save(f"{self.output_dir}/{x:04}_{y:04}.png")
 
     def make_patch_parallel(self):
-        p = Parallel(n_jobs=-1, verbose=3, backend="threading")
-        p([delayed(self.make_patch)(x, y) for x, y in self.iterator])
+        parallel = Parallel(n_jobs=-1, verbose=3, backend="threading")
+        parallel([delayed(self.make_patch)(x, y) for x, y in self.iterator])
 
     def make_patch_for(self):
         for x, y in self.iterator:
@@ -53,6 +53,6 @@ class Patcher:
 
 
 if __name__ == '__main__':
-    p = Patcher()
-    p.make_patch_parallel()
+    patcher = Patcher()
+    patcher.make_patch_parallel()
     # p.make_patch_for() # use if make_patch_parallel doesn't work.
