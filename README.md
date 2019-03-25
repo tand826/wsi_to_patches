@@ -12,4 +12,4 @@ pip install -r requirements.txt
 
 python patcher.py [wsi file] [output size] [overlap size] [directory to output] [value for onshore check]
 
-- note :: "value for onshore check" means the threshold value for deciding whether the patch is a part of stump.
+- note :: "value for onshore check" means the threshold value for deciding whether the patch is a part of a stump. Trying a few times with some values recommended.
