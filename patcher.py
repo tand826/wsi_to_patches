@@ -1,4 +1,5 @@
 from itertools import product
+import numpy as np
 import argparse
 from joblib import Parallel, delayed
 from pathlib import Path
@@ -23,6 +24,8 @@ class Patcher:
                             help="Overlap size.")
         parser.add_argument("output_dir",
                             help="Where to save the patches.")
+        parser.add_argument("onshore_check", default=0,
+                            help="If set a int 1-255, saves only onshore patch.")
         self.args = parser.parse_args()
 
     def _make_output_dir(self):
@@ -41,7 +44,12 @@ class Patcher:
 
     def make_patch(self, x, y):
         patch = self.dzimg.get_tile(self.deepest_level, (x, y))
-        patch.save(f"{self.output_dir}/{x:04}_{y:04}.png")
+        if self.args.onshore_check:
+            checker = np.array(patch)
+            if np.mean(checker) < int(self.args.onshore_check):
+                patch.save(f"{self.output_dir}/{x:04}_{y:04}.png")
+        else:
+            patch.save(f"{self.output_dir}/{x:04}_{y:04}.png")
 
     def make_patch_parallel(self):
         p = Parallel(n_jobs=-1, verbose=3, backend="threading")
