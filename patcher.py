@@ -18,9 +18,13 @@ class Patcher:
         parser.add_argument("img_path",
                             help="Path to the whole slide image.")
         parser.add_argument("output_size",
-                            help="Output patch size of both x, y")
+                            help="Output patch size of both x, y without the overlap area.",
+                            default=254,
+                            type=int)
         parser.add_argument("overlap",
-                            help="Overlap size.")
+                            help="Overlap size.",
+                            default=1,
+                            type=int)
         parser.add_argument("output_dir",
                             help="Where to save the patches.")
         self.args = parser.parse_args()
@@ -44,7 +48,7 @@ class Patcher:
         patch.save(f"{self.output_dir}/{x:04}_{y:04}.png")
 
     def make_patch_parallel(self):
-        parallel = Parallel(n_jobs=-1, verbose=3, backend="threading")
+        parallel = Parallel(n_jobs=-1, verbose=1, backend="threading")
         parallel([delayed(self.make_patch)(x, y) for x, y in self.iterator])
 
     def make_patch_for(self):
