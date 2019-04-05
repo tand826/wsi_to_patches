@@ -18,21 +18,26 @@ class Patcher:
         parser = argparse.ArgumentParser(description="Make patches from WSI.")
         parser.add_argument("img_path",
                             help="Path to the whole slide image.")
-        parser.add_argument("output_size",
+        parser.add_argument("-s", "--output_size",
                             help="Output patch size of both x, y without the overlap area.",
                             default=254,
                             type=int)
-        parser.add_argument("overlap",
+        parser.add_argument("-ov", "--overlap",
                             help="Overlap size.",
                             default=1,
                             type=int)
-        parser.add_argument("output_dir",
+        parser.add_argument("-ou", "--output_dir",
                             help="Where to save the patches.")
-        parser.add_argument("onshore_check", default=0,
+        parser.add_argument("-t", "--thresh",
+                            default=0,
+                            type=int,
                             help="If set a int 1-255, saves only onshore patch.")
         self.args = parser.parse_args()
 
     def _make_output_dir(self):
+        if self.args.output_dir is None:
+            wsipath = Path(self.args.img_path)
+            self.args.output_dir = wsipath.parent/wsipath.stem
         if not Path(self.args.output_dir).exists():
             Path(self.args.output_dir).mkdir(parents=True)
         self.output_dir = Path(self.args.output_dir)
@@ -48,9 +53,9 @@ class Patcher:
 
     def make_patch(self, x, y):
         patch = self.dzimg.get_tile(self.deepest_level, (x, y))
-        if self.args.onshore_check:
+        if self.args.thresh:
             checker = np.array(patch)
-            if np.mean(checker) < int(self.args.onshore_check):
+            if np.mean(checker) < int(self.args.thresh):
                 patch.save(f"{self.output_dir}/{x:04}_{y:04}.png")
         else:
             patch.save(f"{self.output_dir}/{x:04}_{y:04}.png")
